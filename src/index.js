@@ -9,7 +9,7 @@ import BlogRoutes from "./routes/blog.js";
 import ContactRoutes from "./routes/contact.js";
 import AuthRoutes from "./routes/auth.js";
 import ReviewRoutes from "./routes/review.js";
-import FavoriteRoutes from './routes/favorite.js'
+import FavoriteRoutes from "./routes/favorite.js";
 dotenv.config();
 
 const port = process.env.PORT || 8000;
@@ -20,7 +20,7 @@ const app = express();
 mongoose.set("strictQuery", false);
 const connectDB = async () => {
   try {
-    await mongoose.connect("mongodb://localhost:27017/wine-website");
+    await mongoose.connect(process.env.MONGO_CONNECTION);
     console.log("connect to database successfull");
   } catch (error) {
     console.log("connect to database failed");
