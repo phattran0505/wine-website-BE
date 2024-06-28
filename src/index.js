@@ -20,7 +20,7 @@ const app = express();
 mongoose.set("strictQuery", false);
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_CONNECTION);
+    await mongoose.connect("mongodb+srv://phattran0123:phattran0123@cluster0.mmed9le.mongodb.net/wine-website");
     console.log("connect to database successfull");
   } catch (error) {
     console.log("connect to database failed");
