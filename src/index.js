@@ -45,7 +45,8 @@ app.use("/api/v1/auth", AuthRoutes);
 app.use("/api/v1/reviews", ReviewRoutes);
 app.use("/api/v1/favorite", FavoriteRoutes);
 
-app.listen(port, (req, res) => {
-  connectDB();
-  console.log("connect to server successfull");
+connectDB().then(() => {
+  app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+  });
 });
