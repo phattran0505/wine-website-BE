@@ -46,16 +46,21 @@ export const getTopRated = async (req, res) => {
   }
 };
 export const getWineBySearch = async (req, res) => {
-  const size = parseInt(req.query.size);
-  const age = parseInt(req.query.age);
-  const min = parseInt(req.query.min);
-  const max = parseInt(req.query.max);
   try {
-    const wines = await WineModel.find({
-      size,
-      age,
-      price: { $gte: min, $lte: max },
-    }).populate("reviews");
+    const size = req.query.size ? parseInt(req.query.size) : undefined;
+    const age = req.query.age ? parseInt(req.query.age) : undefined;
+    const min = req.query.min ? parseInt(req.query.min) : undefined;
+    const max = req.query.max ? parseInt(req.query.max) : undefined;
+
+    // Tạo đối tượng filter
+    let filter = {};
+
+    if (size) filter.size = size;
+    if (age) filter.age = age;
+    if (min !== undefined && max !== undefined) {
+      filter.newPrice = { $gte: min, $lte: max };
+    }
+    const wines = await WineModel.find(filter).populate("reviews");
     res
       .status(200)
       .json({ success: true, message: "search succes", data: wines });
