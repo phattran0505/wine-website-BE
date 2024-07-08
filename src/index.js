@@ -10,6 +10,7 @@ import ContactRoutes from "./routes/contact.js";
 import AuthRoutes from "./routes/auth.js";
 import ReviewRoutes from "./routes/review.js";
 import FavoriteRoutes from "./routes/favorite.js";
+import OtpRoutes from "./routes/otp.js";
 dotenv.config();
 
 const port = process.env.PORT || 8000;
@@ -44,6 +45,7 @@ app.use("/api/v1/contact", ContactRoutes);
 app.use("/api/v1/auth", AuthRoutes);
 app.use("/api/v1/reviews", ReviewRoutes);
 app.use("/api/v1/favorite", FavoriteRoutes);
+app.use("/api/v1/otp", OtpRoutes);
 
 connectDB().then(() => {
   app.listen(port, () => {

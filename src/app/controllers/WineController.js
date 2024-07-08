@@ -1,11 +1,29 @@
 import WineModel from "../models/WineModel.js";
 
 export const getWines = async (req, res) => {
+  const { type } = req.query;
   try {
-    const wines = await WineModel.find().populate("reviews");
+    const wines = await WineModel.find();
+    const sortWine = wines.sort((a, b) => {
+      if (type === "a-z" || type === "default") {
+        return a.name.localeCompare(b.name);
+      }
+      if (type === "z-a") {
+        return b.name.localeCompare(a.name);
+      }
+      if (type === "asc") {
+        return parseInt(a.newPrice) - parseInt(b.newPrice);
+      }
+      if (type === "dsc") {
+        return parseInt(b.newPrice) - parseInt(a.newPrice);
+      }
+      if (type === "popular") {
+        return b.star - a.star;
+      }
+    });
     res
       .status(200)
-      .json({ success: true, message: "get success", data: wines });
+      .json({ success: true, message: "get success", data: sortWine });
   } catch (error) {
     res.status(500).json({ success: false, message: "get failed" });
   }
@@ -16,9 +34,9 @@ export const getWineDetail = async (req, res) => {
     const wineDetail = await WineModel.findById(id).populate("reviews");
     res
       .status(200)
-      .json({ success: true, message: "get succees", data: wineDetail });
+      .json({ success: true, message: "Get succees", data: wineDetail });
   } catch (error) {
-    res.status(500).json({ success: false, message: "get failde" });
+    res.status(500).json({ success: false, message: "Get failed" });
   }
 };
 export const getFeatured = async (req, res) => {
@@ -61,10 +79,12 @@ export const getWineBySearch = async (req, res) => {
       filter.newPrice = { $gte: min, $lte: max };
     }
     const wines = await WineModel.find(filter).populate("reviews");
-    res
-      .status(200)
-      .json({ success: true, message: "search succes", data: wines });
+    return res.status(200).json({
+      success: true,
+      message: "Filtered successfully ",
+      data: wines,
+    });
   } catch (error) {
-    res.status(500).json({ success: false, message: "not found" });
+    return res.status(500).json({ success: false, message: "not found" });
   }
 };

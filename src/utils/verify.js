@@ -25,27 +25,3 @@ export const verifyToken = (req, res, next) => {
       });
   }
 };
-
-// export const verifyUser = (req, res, next) => {
-//   verifyToken(req, res, next, () => {
-//     if (user._id === req.params.id || user.role === "user") {
-//       next();
-//     } else {
-//       return res
-//         .status(401)
-//         .json({ success: false, message: "you're not authenticated" });
-//     }
-//   });
-// };
-
-// export const verifyAdmin = (req, res, next) => {
-//   verifyToken(req, res, next, () => {
-//     if (user.role === "admin") {
-//       next();
-//     } else {
-//       return res
-//         .status(401)
-//         .json({ success: false, message: "you're not authenticated" });
-//     }
-//   });
-// };

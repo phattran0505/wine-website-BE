@@ -1,6 +1,5 @@
 import FavoriteModel from "../models/FavoriteModel.js";
 import WineModel from "../models/WineModel.js";
-import UserModel from "../models/UserModel.js";
 
 export const toggleFavoriteWine = async (req, res) => {
   const { userId, wineId } = req.body;
@@ -39,15 +38,5 @@ export const getFavortieWine = async (req, res) => {
       .json({ success: true, message: "get success", data: favoritesWines });
   } catch (error) {
     res.status(400).json({ success: false, message: "get failed" });
-  }
-};
-export const getDefaultStauts = async (req, res) => {
-  try {
-    await WineModel.updateMany({
-      isFavorite: false,
-    });
-    res.status(200).json({ success: true, message: "success" });
-  } catch (error) {
-    res.status(400).json({ success: false, message: "failed" });
   }
 };

@@ -6,8 +6,8 @@ export const addContact = async (req, res) => {
     const contact = await newContact.save();
     res
       .status(200)
-      .json({ success: true, message: "creact success", data: contact });
+      .json({ success: true, message: "Contact was successful", data: contact });
   } catch (error) {
-    res.status(500).json({ success: false, message: "create failed" });
+    res.status(500).json({ success: false, message: error });
   }
 };
