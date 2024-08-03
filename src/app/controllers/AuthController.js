@@ -4,11 +4,31 @@ import jwt from "jsonwebtoken";
 import { mailService } from "../../services/MailService.js";
 import UserModel from "../models/UserModel.js";
 
+// generate token
+const generateAccessToken = (user) => {
+  return jwt.sign(
+    { _id: user._id, role: user.role },
+    process.env.JWT_ACCESSTOKEN_KEY,
+    {
+      expiresIn: "30s",
+    }
+  );
+};
+const generateRefreshToken = (user) => {
+  return jwt.sign(
+    { _id: user._id, role: user.role },
+    process.env.JWT_REFRESHTOKEN_KEY,
+    {
+      expiresIn: "365d",
+    }
+  );
+};
+
+// controllers
 export const register = async (req, res) => {
   const salt = bcrypt.genSaltSync(10);
   const hash = bcrypt.hashSync(req.body.password, salt);
   const email = req.body.email;
-  const age = req.body.age;
   try {
     const user = await UserModel.findOne({ email });
     if (user) {
@@ -16,17 +36,12 @@ export const register = async (req, res) => {
         .status(404)
         .json({ success: false, message: "Email has been used !!" });
     }
-    if (age < 18) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Age is not allowed" });
-    }
     const newUser = new UserModel({
       username: req.body.username,
       email: email,
       password: hash,
       phone: req.body.phone,
-      age: age,
+      age: req.body.age,
     });
     await newUser.save();
     await mailService({
@@ -46,6 +61,7 @@ export const register = async (req, res) => {
     });
   }
 };
+
 export const login = async (req, res) => {
   const email = req.body.email;
   try {
@@ -67,26 +83,65 @@ export const login = async (req, res) => {
         .status(401)
         .json({ success: false, message: "Incorrect password" });
     }
+    // create token
+    const accessToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user);
 
     const { password, role, ...rest } = user._doc;
 
-    // create token
-    const token = jwt.sign(
-      { id: user._id, role: user.role },
-      process.env.JWT_KEY,
-      { expiresIn: 60 * 3 }
-    );
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "strict",
+    });
     res.status(200).json({
       success: true,
-      data: { ...rest },
+      data: { ...rest, accessToken },
       role,
-      token,
-      expiresIn: 180,
     });
   } catch (error) {
     res.status(500).json({ success: false, message: "Login failed" });
   }
 };
+
+export const logout = async (req, res) => {
+  try {
+    res.clearCookie("refreshToken");
+    res.status(200).json({ success: true, message: "Log out success" });
+  } catch (error) {
+    return res.status(400).json({ success: false, error: error });
+  }
+};
+
+export const refreshToken = async (req, res) => {
+  const refreshToken = req.cookies.refreshToken;
+  try {
+    if (!refreshToken) {
+      return res
+        .status(401)
+        .json({ success: false, message: "You're not authenticated" });
+    }
+    jwt.verify(refreshToken, process.env.JWT_REFRESHTOKEN_KEY, (err, user) => {
+      if (err) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Refresh token is invalid" });
+      }
+      const newAccessToken = generateAccessToken(user);
+      const newRefreshToken = generateRefreshToken(user);
+      res.cookie("refreshToken", newRefreshToken, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "strict",
+      });
+
+      res.status(200).json({ success: true, accessToken: newAccessToken });
+    });
+  } catch (error) {
+    return res.status(400).json({ success: false, error: error });
+  }
+};
+
 export const resetPassworrd = async (req, res) => {
   const { newPass, confirmPass, email } = req.body;
   try {

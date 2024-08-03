@@ -4,19 +4,22 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import mongoose from "mongoose";
 
-import WineRoutes from "./routes/wine.js";
+import AddressRoutes from "./routes/address.js";
+import AuthRoutes from "./routes/auth.js";
 import BlogRoutes from "./routes/blog.js";
 import ContactRoutes from "./routes/contact.js";
-import AuthRoutes from "./routes/auth.js";
-import ReviewRoutes from "./routes/review.js";
+import CompareRoutes from "./routes/compare.js";
+import CartRoutes from "./routes/cart.js";
 import FavoriteRoutes from "./routes/favorite.js";
 import OtpRoutes from "./routes/otp.js";
+import ReviewRoutes from "./routes/review.js";
+import UserRoutes from "./routes/user.js";
+import WineRoutes from "./routes/wine.js";
 dotenv.config();
 
 const port = process.env.PORT || 8000;
 
 const app = express();
-
 // database
 mongoose.set("strictQuery", false);
 const connectDB = async () => {
@@ -37,15 +40,20 @@ app.use(
   })
 );
 app.use(cookieParser());
+app.use(express.static("public"));
 
 // routes
-app.use("/api/v1/wines", WineRoutes);
+app.use("/api/v1/address", AddressRoutes);
+app.use("/api/v1/auth", AuthRoutes);
 app.use("/api/v1/blog", BlogRoutes);
 app.use("/api/v1/contact", ContactRoutes);
-app.use("/api/v1/auth", AuthRoutes);
-app.use("/api/v1/reviews", ReviewRoutes);
+app.use("/api/v1/compare", CompareRoutes);
+app.use("/api/v1/cart", CartRoutes);
 app.use("/api/v1/favorite", FavoriteRoutes);
 app.use("/api/v1/otp", OtpRoutes);
+app.use("/api/v1/reviews", ReviewRoutes);
+app.use("/api/v1/user", UserRoutes);
+app.use("/api/v1/wines", WineRoutes);
 
 connectDB().then(() => {
   app.listen(port, () => {

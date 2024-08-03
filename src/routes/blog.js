@@ -5,6 +5,7 @@ import {
   getBlogCount,
 } from "../app/controllers/BlogController.js";
 
+
 const router = express.Router();
 
 router.get("/", getBlogs);

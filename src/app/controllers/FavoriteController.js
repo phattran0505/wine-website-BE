@@ -2,12 +2,12 @@ import FavoriteModel from "../models/FavoriteModel.js";
 import WineModel from "../models/WineModel.js";
 
 export const toggleFavoriteWine = async (req, res) => {
-  const { userId, wineId } = req.body;
-  const existFavorite = await FavoriteModel.findOne({ userId, wineId });
-  const newFavorite = new FavoriteModel({ ...req.body });
+  const userId = req.user._id;
+  const { wineId } = req.body;
   try {
+    const existFavorite = await FavoriteModel.findOne({ userId, wineId });
     if (existFavorite) {
-      await FavoriteModel.findByIdAndDelete(existFavorite._id);
+      await FavoriteModel.deleteOne({ _id: existFavorite._id });
       await WineModel.findByIdAndUpdate(wineId, {
         isFavorite: false,
       });
@@ -16,6 +16,7 @@ export const toggleFavoriteWine = async (req, res) => {
       await WineModel.findByIdAndUpdate(wineId, {
         isFavorite: true,
       });
+      const newFavorite = new FavoriteModel({ wineId: wineId, userId: userId });
       await newFavorite.save();
       res.status(200).json({
         success: true,
@@ -27,8 +28,8 @@ export const toggleFavoriteWine = async (req, res) => {
     res.status(400).json({ success: false, message: "add failed" });
   }
 };
-export const getFavortieWine = async (req, res) => {
-  const userId = req.params.userId;
+export const getFavoriteWine = async (req, res) => {
+  const userId = req.user._id;
   try {
     const favoritesWines = await FavoriteModel.find({
       userId: userId,

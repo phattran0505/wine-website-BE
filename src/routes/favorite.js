@@ -1,12 +1,14 @@
 import express from "express";
 import {
   toggleFavoriteWine,
-  getFavortieWine,
+  getFavoriteWine,
 } from "../app/controllers/FavoriteController.js";
+
+import { verifyToken } from "../utils/verify.js";
 
 const router = express.Router();
 
-router.post("/", toggleFavoriteWine);
-router.get("/:userId", getFavortieWine);
+router.post("/", verifyToken, toggleFavoriteWine);
+router.get("/", verifyToken, getFavoriteWine);
 
 export default router;
