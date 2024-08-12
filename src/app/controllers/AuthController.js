@@ -100,7 +100,7 @@ export const login = async (req, res) => {
       role,
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Login failed" });
+    return res.status(500).json({ success: false, message: "Login failed" });
   }
 };
 
