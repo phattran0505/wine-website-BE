@@ -117,7 +117,7 @@ export const refreshToken = async (req, res) => {
   const refreshToken = req.cookies.refreshToken;
   try {
     if (!refreshToken) {
-      return res
+      return res  
         .status(401)
         .json({ success: false, message: "You're not authenticated" });
     }
@@ -129,11 +129,11 @@ export const refreshToken = async (req, res) => {
       }
       const newAccessToken = generateAccessToken(user);
       const newRefreshToken = generateRefreshToken(user);
-      res.cookie("refreshToken", newRefreshToken, {
-        httpOnly: true,
-        secure: false,
-        sameSite: "strict",
-      });
+        res.cookie("refreshToken", newRefreshToken, {
+          httpOnly: true,
+          secure: false,
+          sameSite: "strict",
+        });
 
       res.status(200).json({ success: true, accessToken: newAccessToken });
     });
