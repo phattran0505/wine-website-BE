@@ -31,8 +31,15 @@ const connectDB = async () => {
   }
 };
 
-// middlewares  
-app.use(cors({ origin: true, credentials: true }));
+// middlewares
+app.use(
+  cors({
+    origin: "https://silly-pika-5bfefb.netlify.app",
+    credentials: true,
+    methods: "GET,POST,PUT,DELETE",
+    allowedHeaders: "Content-Type,Authorization",
+  })
+);
 app.use(express.json());
 app.use(
   express.urlencoded({
