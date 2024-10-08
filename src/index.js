@@ -34,9 +34,9 @@ const connectDB = async () => {
 // middlewares
 app.use(
   cors({
-    origin: "https://silly-pika-5bfefb.netlify.app",
+    origin: "*",
     credentials: true,
-    methods: "GET,POST,PUT,DELETE",
+    methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
