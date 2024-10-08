@@ -48,6 +48,7 @@ app.use(
 );
 app.use(cookieParser());
 app.use(express.static("public"));
+app.set("trust proxy", true);
 
 // routes
 app.use("/api/v1/address", AddressRoutes);
