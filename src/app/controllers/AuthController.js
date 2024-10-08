@@ -114,15 +114,18 @@ export const logout = async (req, res) => {
 };
 
 export const refreshToken = async (req, res) => {
+  console.log("Request for refresh token received");
   const refreshToken = req.cookies.refreshToken;
   try {
     if (!refreshToken) {
+      console.log("No refresh token found");
       return res
         .status(401)
         .json({ success: false, message: "You're not authenticated" });
     }
     jwt.verify(refreshToken, process.env.JWT_REFRESHTOKEN_KEY, (err, user) => {
       if (err) {
+        console.log("Invalid refresh token:", err);
         return res
           .status(404)
           .json({ success: false, message: "Refresh token is invalid" });
@@ -132,7 +135,7 @@ export const refreshToken = async (req, res) => {
       res.cookie("refreshToken", newRefreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "None",
+        sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
       });
 
       res.status(200).json({ success: true, accessToken: newAccessToken });
