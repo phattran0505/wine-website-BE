@@ -134,8 +134,10 @@ export const refreshToken = async (req, res) => {
       const newRefreshToken = generateRefreshToken(user);
       res.cookie("refreshToken", newRefreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+        // secure: process.env.NODE_ENV === "production",
+        // sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+        secure: true,
+        sameSite: true,
       });
 
       res.status(200).json({ success: true, accessToken: newAccessToken });
