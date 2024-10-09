@@ -107,7 +107,12 @@ export const login = async (req, res) => {
 
 export const logout = async (req, res) => {
   try {
-    res.clearCookie("refreshToken");
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "None",
+      path: "/",
+    });
     res.status(200).json({ success: true, message: "Log out success" });
   } catch (error) {
     return res.status(400).json({ success: false, error: error });
